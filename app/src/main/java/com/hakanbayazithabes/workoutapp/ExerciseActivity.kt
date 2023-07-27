@@ -1,5 +1,7 @@
 package com.hakanbayazithabes.workoutapp
 
+import android.media.MediaPlayer
+import android.net.Uri
 import android.widget.Toast
 
 
@@ -11,6 +13,7 @@ import android.util.Log
 import android.view.View
 import com.hakanbayazithabes.workoutapp.databinding.ActivityExerciseBinding
 import org.w3c.dom.Text
+import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -27,7 +30,7 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var currentExercisePosition = -1
 
     private var tts: TextToSpeech? = null
-
+    private var player: MediaPlayer? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityExerciseBinding.inflate(layoutInflater)
@@ -52,6 +55,19 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun setupRestView() {
+
+        try {
+            val soundURI =
+                Uri.parse("android.resource://com.hakanbayazithabes.workoutapp/" + R.raw.app_src_main_res_raw_press_start)
+            player = MediaPlayer.create(applicationContext, soundURI)
+            player?.isLooping = false
+            player?.start()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+
         binding?.flRestView?.visibility = View.VISIBLE
         binding?.tvTitle?.visibility = View.VISIBLE
         binding?.tvExerciseName?.visibility = View.INVISIBLE
@@ -146,6 +162,9 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (tts != null) {
             tts!!.stop()
             tts!!.shutdown()
+        }
+        if (player != null){
+            player!!.stop()
         }
         binding = null
     }
